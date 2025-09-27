@@ -1,0 +1,19 @@
+{
+    "name": "SettingsTools",
+    "rootNamespace": "",
+    "references": [
+        "GUID:9886398638d2cbb44862e7a3c6312d40",
+        "GUID:26e7bc110dbd781409077f5f953c4dc7"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 31b9bdc3fbad9b24db56762802a9ee75
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 32416
+  packageName: DOTween Pro
+  packageVersion: 1.0.380
+  assetPath: Assets/Plugins/Demigiant/DOTween/Modules/DOTweenModuleSprite.cs
+  uploadId: 642067
