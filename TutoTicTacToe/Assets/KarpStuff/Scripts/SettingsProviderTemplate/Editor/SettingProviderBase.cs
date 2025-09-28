@@ -8,7 +8,7 @@ using UnityEditor;
 #if UNITY_EDITOR
 public class SettingProviderBase<T> : SettingsProvider where T : ScriptableObject
 {
-    static string NameSpace = "_WorldGame";
+    static string NameSpace = "_KarpTool";
 
     protected static Editor editor;
     public SettingProviderBase(string path, SettingsScope scope) : base(path, scope) { }

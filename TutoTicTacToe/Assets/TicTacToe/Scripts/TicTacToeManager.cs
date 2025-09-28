@@ -8,7 +8,8 @@ public enum ElineType
 {
     Horizontal,
     Vertical,
-    Diagonal
+    DiagonalDownRight,
+    DiagonalUpRight,
 }
 
 public class TicTacToeManager : MonoBehaviour
@@ -58,25 +59,6 @@ public class TicTacToeManager : MonoBehaviour
         bool isLineValid;
 
         //Check for vertical Line
-        for (int col = 0; col < GameGrid.GRID_SIZE; col++)
-        {
-            currentLookedCellState = gameGrid.GetCellAt(0, col).cellState;
-
-            if (currentLookedCellState == ECellState.Empty) continue;
-
-            isLineValid = true;
-            for (int row = 0; row < GameGrid.GRID_SIZE; row++)
-            {
-                isLineValid &= currentLookedCellState == gameGrid.GetCellAt(row, col).cellState;
-            }
-
-            if (isLineValid)
-            {
-                OnLineFind(ElineType.Vertical, col);
-            }
-        }
-
-        //Check for Vertical Line
         for (int row = 0; row < GameGrid.GRID_SIZE; row++)
         {
             currentLookedCellState = gameGrid.GetCellAt(0, row).cellState;
@@ -86,12 +68,31 @@ public class TicTacToeManager : MonoBehaviour
             isLineValid = true;
             for (int col = 0; col < GameGrid.GRID_SIZE; col++)
             {
-                isLineValid &= currentLookedCellState == gameGrid.GetCellAt(row, col).cellState;
+                isLineValid &= currentLookedCellState == gameGrid.GetCellAt(col, row).cellState;
             }
 
             if (isLineValid)
             {
-                OnLineFind(ElineType.Horizontal, row);
+                OnLineFind(ElineType.Vertical, new Vector2Int(0, row));
+            }
+        }
+
+        //Check for Vertical Line
+        for (int col = 0; col < GameGrid.GRID_SIZE; col++)
+        {
+            currentLookedCellState = gameGrid.GetCellAt(col, 0).cellState;
+
+            if (currentLookedCellState == ECellState.Empty) continue;
+
+            isLineValid = true;
+            for (int row = 0; row < GameGrid.GRID_SIZE; row++)
+            {
+                isLineValid &= currentLookedCellState == gameGrid.GetCellAt(col, row).cellState;
+            }
+
+            if (isLineValid)
+            {
+                OnLineFind(ElineType.Horizontal, new Vector2Int(col, 0));
             }
         }
 
@@ -107,7 +108,7 @@ public class TicTacToeManager : MonoBehaviour
             }
             if (isLineValid)
             {
-                OnLineFind(ElineType.Diagonal, 0, false);
+                OnLineFind(ElineType.DiagonalDownRight, new Vector2Int(0, 0));
             }
         }
 
@@ -124,48 +125,39 @@ public class TicTacToeManager : MonoBehaviour
             }
             if (isLineValid)
             {
-                OnLineFind(ElineType.Diagonal, 0, true);
+                OnLineFind(ElineType.DiagonalUpRight, new Vector2Int(0, GameGrid.GRID_SIZE - 1));
             }
         }
 
     }
 
-    private void OnLineFind(ElineType lineType, int index, bool diagonalUpRight = false)
+    private void OnLineFind(ElineType lineType, Vector2Int startPos)
     {
         playerXWin = isPlayerXTurn;
         line.gameObject.SetActive(true);
 
-        CellButton startingCell;
+        CellButton startingCell = gameGrid.GetCellAt(startPos);
         CellButton endingCell;
 
         switch (lineType)
         {
             case ElineType.Horizontal:
                 line.localRotation = Quaternion.Euler(0, 0, 0);
-                startingCell = gameGrid.GetCellAt(0, index);
-                endingCell = gameGrid.GetCellAt(GameGrid.GRID_SIZE - 1, index);
+                endingCell = gameGrid.GetCellAt(GameGrid.GRID_SIZE - 1, startPos.y);
                 break;
             case ElineType.Vertical:
                 line.localRotation = Quaternion.Euler(0, 0, 90);
-                startingCell = gameGrid.GetCellAt(index, 0);
-                endingCell = gameGrid.GetCellAt(index, GameGrid.GRID_SIZE - 1);
+                endingCell = gameGrid.GetCellAt(startPos.x, GameGrid.GRID_SIZE - 1);
                 break;
-            case ElineType.Diagonal:
-                if (diagonalUpRight)
-                {
-                    line.localRotation = Quaternion.Euler(0, 0, 45);
-                    startingCell = gameGrid.GetCellAt(0, GameGrid.GRID_SIZE - 1);
-                    endingCell = gameGrid.GetCellAt(GameGrid.GRID_SIZE - 1, 0);
-                }
-                else
-                {
-                    line.localRotation = Quaternion.Euler(0, 0, -45);
-                    startingCell = gameGrid.GetCellAt(0, 0);
-                    endingCell = gameGrid.GetCellAt(GameGrid.GRID_SIZE - 1, GameGrid.GRID_SIZE - 1);
-                }
+            case ElineType.DiagonalDownRight:
+                line.localRotation = Quaternion.Euler(0, 0, -45);
+                endingCell = gameGrid.GetCellAt(GameGrid.GRID_SIZE - 1, GameGrid.GRID_SIZE - 1);
+                break;
+            case ElineType.DiagonalUpRight:
+                line.localRotation = Quaternion.Euler(0, 0, 45);
+                endingCell = gameGrid.GetCellAt(GameGrid.GRID_SIZE - 1, 0);
                 break;
             default:
-                startingCell = gameGrid.GetCellAt(0, 0);
                 endingCell = gameGrid.GetCellAt(GameGrid.GRID_SIZE - 1, GameGrid.GRID_SIZE - 1);
                 break;
         }
@@ -173,7 +165,13 @@ public class TicTacToeManager : MonoBehaviour
         line.position = startingCell.Rect.position;
         line.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Vector3.Distance(startingCell.Rect.anchoredPosition, endingCell.Rect.anchoredPosition));
 
-        Debug.Log($"Line Type {lineType} at {index}");
+        Debug.Log($"Line Type {lineType} at {startPos}");
+
+        foreach (var cell in gameGrid.cells)
+        {
+            cell.Desactivate();
+        }
+
         Invoke("OnGameEnd", 2.5f);
     }
 
@@ -181,11 +179,11 @@ public class TicTacToeManager : MonoBehaviour
     {
         if (isPlayerXTurn)
         {
-            cellButton.FillCellWith(ECellState.X);
+            cellButton.FillCellWith(ECellState.Player1);
         }
         else
         {
-            cellButton.FillCellWith(ECellState.O);
+            cellButton.FillCellWith(ECellState.Player2);
         }
 
         CheckForLine();

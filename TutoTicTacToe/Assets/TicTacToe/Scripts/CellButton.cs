@@ -5,8 +5,8 @@ using UnityEngine;
 public enum ECellState
 {
     Empty,
-    X,
-    O
+    Player1,
+    Player2
 }
 
 [RequireComponent (typeof(Button))]
@@ -46,6 +46,11 @@ public class CellButton : MonoBehaviour
         button.interactable = true;
         SetState(ECellState.Empty);
     }
+
+    public void Desactivate()
+    {
+        button.interactable = false;
+    }
     public void FillCellWith(ECellState state)
     {
         SetState(state);
@@ -54,7 +59,6 @@ public class CellButton : MonoBehaviour
             button.interactable = false;
         }
     }
-
     private void SetState(ECellState state)
     {
         cellState = state;
@@ -65,11 +69,11 @@ public class CellButton : MonoBehaviour
         stateImage.color = Color.white;
         switch (cellState)
         {
-            case ECellState.X:
+            case ECellState.Player1:
                 stateImage.sprite = spriteX;
                 stateImage.color = colorX;
                 break;
-            case ECellState.O:
+            case ECellState.Player2:
                 stateImage.sprite = spriteO;
                 stateImage.color = colorO;
                 break;

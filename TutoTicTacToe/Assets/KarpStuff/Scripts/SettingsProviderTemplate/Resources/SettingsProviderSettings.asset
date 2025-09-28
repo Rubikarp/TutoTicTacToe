@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: SettingsProviderSettings
   m_EditorClassIdentifier: SettingsTools::SettingsTools.SettingsProviderSettings
   nameSpace: _KarpTool
-  settingsName: Game
+  settingsName: Grid
